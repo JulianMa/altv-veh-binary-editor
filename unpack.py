@@ -1,5 +1,26 @@
 import struct
 
+class VehModsParser:
+    def __init__(self, filename):
+
+        self.mod_kits = []
+
+        try:
+            file = open(filename, "rb")
+
+            self.magic_byte = str(file.read(2)).split('b\'', 1)[1].split('\'')[
+                0]  # C-Styles String Workaround
+
+            self.version = file.read(2)
+
+            current_mod_kit = VehicleModKit(file)
+            while current_mod_kit.exists:
+                self.mod_kits.append(current_mod_kit)
+                current_mod_kit = VehicleModKit(file)
+
+        finally:
+            file.close()
+
 
 class VehicleModKit:
 
@@ -18,7 +39,6 @@ class VehicleModKit:
 
             self.modKitName = str(f.read(modkit_name_string_length)).split('b\'', 1)[1].split('\'')[
                 0]  # C-Styles String Workaround
-
 
             self.modNumTotal = struct.unpack_from("<b", f.read(1))[0]
             for x in range(self.modNumTotal):
@@ -41,25 +61,25 @@ class Mod:
         self.modIndex = m
 
 
-f = open("vehmods.bin", "rb")
+#f = open("bin/vehmods.bin", "rb")
 # origOffset = 65517
-dirtyOffset = 63040
-devoffset = 65517
-rcoffset = 65337
+#dirtyOffset = 63040
+#devoffset = 65517
+#rcoffset = 65337
 
-try:
-    magicByte = f.read(2)
-    version = f.read(2)
+#try:
+#    magicByte = f.read(2)
+#    version = f.read(2)
 
     # f.read(dirtyOffset)
-    test = VehicleModKit(f);
-    while (test.exists):
-        print(test.modKitName + ": " + str(test.modNumTotal))
-        for x in range(len(test.mods)):
-            print("Mod: " + str(test.mods[x].modType) + " TotalMods: " + str(test.mods[x].modNum))
-
-        test = VehicleModKit(f)
-        print("-------------------------------------------------------------------------------------")
-
-finally:
-    f.close()
+#    test = VehicleModKit(f);
+#    while (test.exists):
+#        print(test.modKitName + ": " + str(test.modNumTotal))
+#        for x in range(len(test.mods)):
+#            print("Mod: " + str(test.mods[x].modType) + " TotalMods: " + str(test.mods[x].modNum))#
+#
+#        test = VehicleModKit(f)
+#        print("-------------------------------------------------------------------------------------")
+#
+#finally:
+#    f.close()
